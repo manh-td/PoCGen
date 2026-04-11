@@ -76,11 +76,18 @@ export default class DefaultRefiner {
    }
 
    async refine() {
+      // console.log("this.advisory.id: ", Object.keys(this.runner))
+      let vfc_text = "";
+      const vfcPath = `./vfc/${this.runner.advisory.id}/vfc_info.txt`;
+      if (fs.existsSync(vfcPath)) {
+         vfc_text = fs.readFileSync(vfcPath, "utf-8");
+      }
       this.renderVars = {
          vulnerabilityType: this.vulnerabilityType,
          vulnerabilityDescription: this.vulnerabilityDescription,
          package: this.package,
          source: this.source,
+         vfc: vfc_text
       }
 
       if (this.refinementOptions.includeSimilarExploits) {

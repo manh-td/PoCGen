@@ -71,7 +71,7 @@ function addModelOptions(command) {
       .addOption(
          new Option("-m, --model <model>", "model to use")
             .choices(models.map(s => s.name))
-            .default(models[0].name)
+            .default("gpt-4o-mini")
       )
       .option(
          "--promptCache",
@@ -123,7 +123,7 @@ function addBaseOptions(command) {
                return input;
             }),
       )
-      .option("-o, --output <output>", "output folder", "/output")
+      .option("-o, --output <output>", "output folder", "./output")
       .option("-packageName, --packageName <packageName>", "package name")
       .option("-v, --verbose", "print the prompts and responses of the model")
       .option("-choices, --choices <choices>", "completion choices", intParser, 1)
