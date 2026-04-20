@@ -71,7 +71,7 @@ function addModelOptions(command) {
       .addOption(
          new Option("-m, --model <model>", "model to use")
             .choices(models.map(s => s.name))
-            .default("gpt-5-mini")
+            .default("gpt-4o-mini")
       )
       .option(
          "--promptCache",
@@ -81,7 +81,7 @@ function addModelOptions(command) {
          "--temperature <temperature>",
          "number between 0 and 2 indicating the randomness of the model",
          floatParser,
-         1,
+         0,
       )
       .option(
          "--maxCompletionTokensTotal <maxCompletionTokensTotal>",
