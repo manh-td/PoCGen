@@ -4,6 +4,7 @@ import {Command, InvalidArgumentError, Option} from "commander";
 import {loadEnv} from "./src/utils/utils.js";
 import {GHSAPipelineRunner} from "./src/pipeline/ghsaPipeline.js";
 import {DefaultPipelineRunner} from "./src/pipeline/defaultPipeline.js";
+import {VfcPipelineRunner} from "./src/pipeline/vfcPipeline.js";
 import {RunnerSourceNotExported} from "./src/runners/runnerSourceNotExported.js";
 import {RunnerExploitUpstreamPackage} from "./src/runners/runnerExploitUpstreamPackage.js";
 import {readFileSync} from "node:fs";
@@ -223,6 +224,23 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
          (opts.advisoryIds ? new DefaultPipelineRunner(opts) : new GHSAPipelineRunner(opts))
             .start()
             .catch(console.error);
+      });
+
+   addBaseOptions(cmd.command("vfc-pipeline"))
+      .description("run pipeline using pre-computed VFC data instead of fetching from the internet")
+      .requiredOption("--vfcDataPath <vfcDataPath>", "path to vfcs.predicted.json")
+      .requiredOption("--idMapPath <idMapPath>", "path to id-map.json")
+      .option("-offset, --offset <offset>", "offset to start from", intParser, 0)
+      .option("-timeout, --timeout <timeout>", "timeout in seconds", intParser, 60 * 60)
+      .option(
+         "-limit, --limit <limit>",
+         "limit the number of records to process",
+         intParser,
+         Infinity,
+      )
+      .action((opts) => {
+         loadEnv(opts);
+         new VfcPipelineRunner(opts).start().catch(console.error);
       });
 
    cmd.parse(process.argv);

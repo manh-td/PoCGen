@@ -81,6 +81,7 @@ export default class DefaultRefiner {
          vulnerabilityDescription: this.vulnerabilityDescription,
          package: this.package,
          source: this.source,
+         fixCommit: this.runner.fixCommit,
       }
 
       if (this.refinementOptions.includeSimilarExploits) {

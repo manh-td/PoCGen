@@ -1,4 +1,5 @@
 import GhsaApi, {isValidGhsaId} from "../vulnerability-databases/ghsaApi.js"
+import VfcDatabase from "../vulnerability-databases/vfcDatabase.js"
 import {createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync} from "node:fs";
 import {join, resolve} from "node:path";
 import {getExportsFromPackage} from "../analysis/api-explorer/getExports.js";
@@ -119,7 +120,9 @@ export class Runner extends RunnerResult {
 
    async setupWorkingDir() {
       const advisoryId = this.opts.advisoryId = this.opts.advisoryId?.split("/").pop();
-      if (isValidGhsaId(advisoryId)) {
+      if (this.opts.vfcRecord) {
+         this.vulnerabilityDatabase = new VfcDatabase(this.opts.vfcRecord);
+      } else if (isValidGhsaId(advisoryId)) {
          this.vulnerabilityDatabase = new GhsaApi();
       } else if (isValidSnykId(advisoryId)) {
          this.vulnerabilityDatabase = new SnykApi();
@@ -174,6 +177,10 @@ export class Runner extends RunnerResult {
    async run() {
       await this.setupWorkingDir();
       this.setupLogging();
+      this.fixCommit = this.opts.vfcRecord ? {
+         message: this.opts.vfcRecord.commit_message,
+         changes: this.opts.vfcRecord.source_code_changes,
+      } : null;
 
       const lmModule = (await loadModels()).find((m) => m.name === this.opts.model);
       this.model = new lmModule.default(this.opts);
