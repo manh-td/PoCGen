@@ -229,7 +229,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
    addBaseOptions(cmd.command("vfc-pipeline"))
       .description("run pipeline using pre-computed VFC data instead of fetching from the internet")
       .requiredOption("--vfcDataPath <vfcDataPath>", "path to vfcs.predicted.json")
-      .requiredOption("--idMapPath <idMapPath>", "path to id-map.json")
       .option("-offset, --offset <offset>", "offset to start from", intParser, 0)
       .option("-timeout, --timeout <timeout>", "timeout in seconds", intParser, 60 * 60)
       .option(
@@ -238,7 +237,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
          intParser,
          Infinity,
       )
-      .action((opts) => {
+      .argument("[advisoryIds...]", "advisory IDs to process; if omitted, all records are run")
+      .action((advisoryIds, opts) => {
+         opts.advisoryIds = advisoryIds.flatMap(id =>
+            fs.existsSync(id) ? readFileSync(id, "utf-8").split("\n") : [id]
+         ).map(s => s.trim()).filter(s => s.length > 0 && !s.startsWith("#"));
          loadEnv(opts);
          new VfcPipelineRunner(opts).start().catch(console.error);
       });

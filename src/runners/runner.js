@@ -177,6 +177,7 @@ export class Runner extends RunnerResult {
    async run() {
       await this.setupWorkingDir();
       this.setupLogging();
+      this.providedVulnerabilityTypeLabel = this.opts.vulnerabilityTypeLabel ?? null;
       this.fixCommit = this.opts.vfcRecord ? {
          message: this.opts.vfcRecord.commit_message,
          changes: this.opts.vfcRecord.source_code_changes,
@@ -328,6 +329,9 @@ export class Runner extends RunnerResult {
       if (!this.vulnerabilityDescription) {
          throw new Error(`No description provided`);
       }
+      if (this.opts.vfcRecord) {
+         return this.vulnerabilityDescription;
+      }
       const prompt = getPrompt("removePoC", {
          vulnerabilityDescription: this.vulnerabilityDescription,
       });
@@ -361,7 +365,7 @@ export class Runner extends RunnerResult {
     */
    async identifyVulnerabilityType() {
       if (this.opts.vulnerabilityTypeLabel) {
-         return [await loadVulnerabilityType(this.opts.vulnerabilityTypeLabel)];
+         return this.llmIdentifiedVulnerabilityTypes = [await loadVulnerabilityType(this.opts.vulnerabilityTypeLabel)];
       }
       if (!this.vulnerabilityDescription) {
          throw new Error(`No vulnerability description`);
@@ -400,7 +404,7 @@ export class Runner extends RunnerResult {
       }
 
       if (votes.size === 0) {
-         return await loadVulnerabilityTypes();
+         return this.llmIdentifiedVulnerabilityTypes = await loadVulnerabilityTypes();
       }
 
       const r = Array.from(votes.entries()).sort((a, b) => b[1] - a[1]);

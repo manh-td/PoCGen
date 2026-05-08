@@ -77,6 +77,13 @@ export default class RunnerResult {
    candidatesByName;
 
    /**
+    * The vulnerability type label explicitly provided via options (not LLM-derived).
+    *
+    * @type {string|null}
+    */
+   providedVulnerabilityTypeLabel = null;
+
+   /**
     * The name of the function that was identified based on the description.
     *
     * @type {string|null}
