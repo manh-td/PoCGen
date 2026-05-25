@@ -107,7 +107,7 @@ export default class CommandInjectionValidator extends Validator {
       if (this.checkCondition()) {
          this._spawn({
             file: rceBinary,
-            args: [rceBinary, "reset"],
+            args: ["reset"],
             stdio: [
                {type: "pipe", readable: !0, writable: !1},
                {
@@ -233,7 +233,7 @@ export async function validate(asyncFn) {
    const rceBinary = "/usr/bin/genpoc";
    try {
       // Reset
-      require("child_process").spawnSync(rceBinary, [rceBinary, "reset"]);
+      require("child_process").spawnSync(rceBinary, ["reset"]);
       await asyncFn();
    } catch (e) {
       console.error(e);
