@@ -1,5 +1,6 @@
 services:
   app:
+    build: .
     image: gen-poc_mnt:latest
     container_name: pocgen-original
     stdin_open: true
